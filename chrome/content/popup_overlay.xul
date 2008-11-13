@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<overlay id="witchhammer_overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" >	 	
+
+  <popup id="contentAreaContextMenu">
+    <menuitem id="witchhammer_search_item" label="View on Metal Archives" />
+  </popup>
+
+  <popupset id="mainPopupSet">
+    <panel id="mr-Panel" noautohide="true">				
+    </panel>
+  </popupset>
+
+</overlay>
+
