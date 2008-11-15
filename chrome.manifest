@@ -1,3 +1,5 @@
 content     witchhammer    chrome/content/
 
 overlay chrome://browser/content/browser.xul chrome://witchhammer/content/popup_overlay.xul
+
+skin witchhammer classic/1.0 chrome/skin/
