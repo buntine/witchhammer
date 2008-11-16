@@ -7,7 +7,7 @@ MAParser.prototype = {
   classID:          Components.ID("{ae910a75-1f06-49cb-b853-cc0b9585ede6}"),
   contractID:       "@andrewbuntine.com/ma_parser;1",
   QueryInterface: XPCOMUtils.generateQI(),
-  parse: function(html, filepath) {
+  parse_and_store: function(html, filepath) {
 
     var table = /\<table(.*)\>.+\<\/table\>/;
     var tables = table.exec(html);
@@ -19,6 +19,7 @@ MAParser.prototype = {
       var serializer = Components.classes["@mozilla.org/xmlextras/xmlserializer;1"].createInstance(Components.interfaces.nsIDOMSerializer);
       var doc = parser.parseFromString("<bands></bands>", "text/xml");
       
+      // Generate XML contents for each search result.
       while ((band_data = band_extractor.exec(tables[0])) != null) {
         var band = doc.createElement("band");
         var id = doc.createElement("id");
@@ -36,23 +37,20 @@ MAParser.prototype = {
         doc.getElementsByTagName("bands")[0].appendChild(band);
       }
 
-      var file = Components.classes["@mozilla.org/file/local;1"]
-                   .createInstance(Components.interfaces.nsILocalFile);
+//      var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+//      var stream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
 
       // Open local file for reading/writing.
-      file.initWithPath(filepath);
-
-      var stream = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                    .createInstance(Components.interfaces.nsIFileOutputStream);
+//      file.initWithPath(filepath);
 
       // Open output stream for writing(0x02), creating(0x08) and truncating(0x20).
-      stream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
+//      stream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
 
-      // Write contents and close stream.
-      serializer.serializeToStream(doc, stream, "");
-      stream.close();
+      // Serialize and write contents and close stream.
+//      serializer.serializeToStream(doc, stream, "");
+//      stream.close();
 
-      return "true";
+      return serializer.serializeToString(doc);
     }
   }
 };
