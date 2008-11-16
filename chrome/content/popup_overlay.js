@@ -27,14 +27,14 @@ var event_handler = {
     try {
       netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-      var ma_parser = Components.classes['@andrewbuntine.com/ma_parser;1']
-                          .getService().wrappedJSObject;
+      var ma_parser = Components.classes['@andrewbuntine.com/ma_parser;1'].getService().wrappedJSObject;
       var request = new XMLHttpRequest();
+
       request.open('GET', 'http://www.metal-archives.com/search.php?string=diamond&type=band', true);
       request.onreadystatechange = function (aEvt) {
         if (request.readyState == 4) {
           if(request.status == 200) {
-            alert(ma_parser.parse(request.responseText));
+            alert(ma_parser.parse(request.responseText, local_env.get_extension_path().path + "/tmp/bands.xml"));
 
             // Display frame with results.
        //   event_handler.results_panel.openPopup(null, "before_end", x, y, false, false);	
