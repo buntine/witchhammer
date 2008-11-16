@@ -24,32 +24,30 @@ var event_handler = {
     var x = parseInt((window.innerWidth / 2) - (PANEL_WIDTH / 2));
     var y = parseInt((window.innerHeight / 2) - (PANEL_HEIGHT / 2));
 
-try {
-        // this is needed to generally allow usage of components in javascript
-        netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+    try {
+      netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-        var myComponent = Components.classes['@andrewbuntine.com/helloworld;1']
-                                    .getService().wrappedJSObject;
-var req = new XMLHttpRequest();
-req.open('GET', 'http://www.metal-archives.com/search.php?string=diamond&type=band', true);
-req.onreadystatechange = function (aEvt) {
-  if (req.readyState == 4) {
-     if(req.status == 200) {
-        alert(myComponent.hello(req.responseText));
+      var ma_parser = Components.classes['@andrewbuntine.com/ma_parser;1']
+                          .getService().wrappedJSObject;
+      var request = new XMLHttpRequest();
+      request.open('GET', 'http://www.metal-archives.com/search.php?string=diamond&type=band', true);
+      request.onreadystatechange = function (aEvt) {
+        if (request.readyState == 4) {
+          if(request.status == 200) {
+            alert(ma_parser.parse(request.responseText));
 
-    // Display frame with results.
- //   event_handler.results_panel.openPopup(null, "before_end", x, y, false, false);	
-     }
-     else
-      alert("Error loading page\n");
-  }
-};
-req.send(null);
+            // Display frame with results.
+       //   event_handler.results_panel.openPopup(null, "before_end", x, y, false, false);	
+          } else
+            alert("Error loading page\n");
+        }
+      };
 
-} catch (anError) {
-        alert("ERROR: " + anError);
-}
+      request.send(null);
 
+    } catch (anError) {
+      alert("ERROR: " + anError);
+    }
   }
 
 };
