@@ -35,27 +35,11 @@ var event_handler = {
       request.onreadystatechange = function (aEvt) {
         if (request.readyState == 4) {
           if(request.status == 200) {
-            var xml_data = ma_parser.parse_and_store(request.responseText, local_env.get_extension_path().path + "/chrome/tmp/bands.xml");
+            var success = ma_parser.parse_and_store(request.responseText, local_env.get_extension_path().path + "/chrome/content/tmp/bands.xml");
 
             // Display frame with results.
-            if (xml_data.length > 0) {
-alert(xml_data);
-        //      event_handler.results_panel.openPopup(null, "before_end", x, y, false, false);	
- 
-var dom_parser = new DOMParser();
-var dom = dom_parser.parseFromString(xml_data, "text/xml");
-
-              var bands = dom.getElementsByTagName("band");
-             
-alert(bands.length);
-              for (var i=0; i<bands.length; i++) {
-                var li = event_handler.results_frame.contentDocument.createElement("li");
-                var a = event_handler.results_frame.contentDocument.createElement("a");
-                a.setAttribute("href", "#");
-                a.textContent = i;
-                li.appendChild(a);
-                event_handler.results_frame.contentDocument.getElementById("witchhammer_bands").appendChild(li);
-              }
+            if ( success ) {
+              window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal").focus();
             }
           } else
             alert("Error loading page\n");
