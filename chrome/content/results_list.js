@@ -9,8 +9,14 @@ var results_handler = {
   },
 
   on_dialog_accept : function() {
+    var to_view = this.find_selection_ranges();
+
+    alert(to_view);
+  },
+
+  find_selection_ranges : function() {
+    var selected = new Array();
     var range_count = this.results_tree.view.selection.getRangeCount();
-    var to_view = new Array();
 
     // Collect each selected treeitem into the array.
     for (var i=0; i<range_count; i++) {
@@ -18,10 +24,10 @@ var results_handler = {
       this.results_tree.view.selection.getRangeAt(i, start, end);
   
       for(var c=start.value; c<=end.value; c++)
-        to_view.push(this.results_tree.view.getItemAtIndex(c).className);
+        selected.push(this.results_tree.view.getItemAtIndex(c).className);
     }
 
-    alert(to_view);
+    return selected;
   }
 
 };
