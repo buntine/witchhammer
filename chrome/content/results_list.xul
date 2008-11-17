@@ -8,36 +8,29 @@
         buttons="accept,cancel"
         width="600" height="360">
 
-<tree flex="1" rows="15">
+  <script type="application/x-javascript" src="chrome://witchhammer/content/results_list.js"/>
 
-  <treecols>
-    <treecol id="witchhammer_results_name" label="Band" flex="1"/>
-    <treecol id="witchhammer_results_alt" label="Alternate/Old names" flex="2"/>
-  </treecols>
+  <tree id="witchhammer_results_tree" flex="1" rows="15">
 
-  <treechildren datasources="tmp/bands.xml" ref="*" querytype="xml">
-    <template>
-      <query expr="band" />
-      <action>
-        <treeitem uri="?">
-          <treerow>
-            <treecell label="?name" />
-            <treecell label="?alt" />
-          </treerow>
-        </treeitem>
-      </action>
-    </template>
-  </treechildren>
+    <treecols>
+      <treecol id="witchhammer_results_name" label="Band" flex="1" />
+      <treecol id="witchhammer_results_alt" label="Alternate/Old names" flex="2" />
+    </treecols>
 
-</tree>
-<!--
-<listbox datasources="tmp/bands.xml" ref="*" querytype="xml">
-  <template>
-    <query expr="band"/>
-    <action>
-      <listitem uri="?" label="?name"/>
-    </action>
-  </template>
-</listbox>
--->
+    <treechildren datasources="tmp/bands.xml" ref="*" querytype="xml">
+      <template>
+        <query expr="band" />
+        <action>
+          <treeitem class="?id" uri="?">
+            <treerow> 
+              <treecell label="?name" />
+              <treecell label="?alt" />
+            </treerow>
+          </treeitem>
+        </action>
+      </template>
+    </treechildren>
+
+  </tree>
+
 </dialog>
