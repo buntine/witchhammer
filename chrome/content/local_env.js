@@ -1,3 +1,6 @@
+
+// Holds environment-oriented methods.
+
 var local_env = {
 
   // Returns users O/S.

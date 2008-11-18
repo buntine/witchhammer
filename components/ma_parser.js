@@ -7,10 +7,16 @@ MAParser.prototype = {
   classID:          Components.ID("{ae910a75-1f06-49cb-b853-cc0b9585ede6}"),
   contractID:       "@andrewbuntine.com/ma_parser;1",
   QueryInterface: XPCOMUtils.generateQI(),
+
+  // Parses the results page and translates the information we need into a easy-to-use XML file.
+  // Abstracting the dirty details into a component keeps the Witchhammer extension much cleaner
+  // If the parsed website modifies its markup, it's just a matter of updating the appropriate data
+  // in this file.
   parse_and_store: function(html, filepath) {
 
     var table = /\<table(.*)\>.+\<\/table\>/;
     var tables = table.exec(html);
+
     if ( !tables)
       return false;
     else {
@@ -45,6 +51,16 @@ MAParser.prototype = {
 
       return true;
     }
+  },
+
+  // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
+  // client-side in the case of only one result being found. This method will parse the returned
+  // markup and extract the band ID that we need.
+  find_band_in_single_result : function(html) {
+    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'band\.php\?id\=(\d+)\'\;\<\/script\>/;
+    var id = id_extractor.exec(html);
+
+    return (id) ? parseInt(id[1]) : 0;
   }
 };
 

@@ -4,6 +4,7 @@ window.addEventListener("load", function() { event_handler.init(); }, false);
 var event_handler = {
 
   init : function() {
+    this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_search_item");
     this.results_panel = document.getElementById("witchhammer_results_panel");
     this.results_frame = document.getElementById("witchhammer_results_frame");
@@ -19,7 +20,7 @@ var event_handler = {
 
   on_search_item_clicked : function() {
     var selection = local_env.urlencode(getBrowserSelection());
-    var url = "http://www.metal-archives.com/search.php?string=" + selection + "&type=band";
+    var url = this.root_url + "/search.php?string=" + selection + "&type=band";
 
     try {
       netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -35,8 +36,19 @@ var event_handler = {
             var success = ma_parser.parse_and_store(request.responseText, local_env.get_extension_path().path + filepath);
 
             // Display frame with results.
-            if ( success ) {
+            if (success) {
               window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal").focus();
+
+            // If no match was found, make sure it was not because only one band
+            // was found (MA simply returns a JavaScript redirect in this case).
+            } else {
+              var band_id = ma_parser.find_band_in_single_result(request.responseText);
+
+              if (band_id > 0) {
+                getBrowser().addTab(event_handler.root_url + "/band.php?id=" + band_id);
+              } else {
+                alert("Could not parse Metal Archives results page!");
+              }
             }
           } else
             alert("Error loading page\n");
