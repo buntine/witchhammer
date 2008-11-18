@@ -10,8 +10,7 @@ var results_handler = {
 
   on_dialog_accept : function() {
     var to_view = this.find_selection_ranges();
-
-    alert(to_view);
+    window.arguments[0].out = to_view;
   },
 
   find_selection_ranges : function() {
