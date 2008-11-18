@@ -53,6 +53,11 @@ MAParser.prototype = {
     }
   },
 
+  // Returns true if the supplied markup represents a "No Results" page.
+  is_no_results_page : function(html) {
+    return true;
+  },
+
   // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
   // client-side in the case of only one result being found. This method will parse the returned
   // markup and extract the band ID that we need.

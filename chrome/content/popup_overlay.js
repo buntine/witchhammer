@@ -22,7 +22,6 @@ var event_handler = {
     var selection = local_env.urlencode(getBrowserSelection());
     var url = this.root_url + "/search.php?string=" + selection + "&type=band";
 
-    try {
       netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
       var request = new XMLHttpRequest();
@@ -44,7 +43,10 @@ var event_handler = {
               if (params.out)
                 event_handler.display_bands(params.out);
 
-            // If no match was found, make sure it was not because only one band
+            } else if (ma_parser.is_no_results_page(request.responseText)) {
+              local_env.display_alert("No bands found!");
+
+            // Finally, make sure the failure was not because only one band
             // was found (MA simply returns a JavaScript redirect in this case).
             } else {
               var band_id = ma_parser.find_band_in_single_result(request.responseText);
@@ -52,18 +54,14 @@ var event_handler = {
               if (band_id > 0)
                 event_handler.display_band_in_tab(band_id);
               else
-                alert("Could not parse Metal Archives results page!");
+                local_env.display_alert("Could not parse Metal Archives results page!");
             }
           } else
-            alert("Error loading page\n");
+            local_env.display_alert("Error loading page");
         }
       };
 
       request.send(null);
-
-    } catch (anError) {
-      alert("ERROR: " + anError);
-    }
   },
 
   display_bands : function(bands) {

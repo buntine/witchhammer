@@ -25,6 +25,14 @@ var local_env = {
     return seperator + path.join(seperator);
   },
 
+  // Displays a personalised alert.
+  display_alert : function(message) {
+    var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                    .getService(Components.interfaces.nsIPromptService);
+
+    prompts.alert(null, "Witchhammer", message);
+  },
+
   // Smart URL encode.
   // From: http://kevin.vanzonneveld.net
   urlencode : function (str) {
