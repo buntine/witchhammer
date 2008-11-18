@@ -5,7 +5,7 @@ window.addEventListener("dialogaccept", function() { results_handler.on_dialog_a
 var results_handler = {
 
   init : function() {
-    this.results_tree = document.getElementById('witchhammer_results_tree');
+    this.results_tree = document.getElementById("witchhammer_results_tree");
   },
 
   on_dialog_accept : function() {
