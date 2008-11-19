@@ -1,5 +1,5 @@
 
-// Holds environment-oriented methods.
+// Holds (mostly) environment-oriented methods.
 
 var local_env = {
 
@@ -21,7 +21,7 @@ var local_env = {
 
   // Returns a filepath for the native O/S
   build_path : function(path) {
-    var seperator = (this.get_os == "WINNT") ? "\\" : "/";
+    var seperator = (this.get_os() == "WINNT") ? "\\" : "/";
     return seperator + path.join(seperator);
   },
 
