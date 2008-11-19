@@ -31,7 +31,7 @@ MAParser.prototype = {
 
         band.setAttribute("id", band_data[2]);
         band.setAttribute("name", band_data[3]);
-        band.setAttribute("alt", band_data[4]);
+        band.setAttribute("alt", clean_alternate_name_data(band_data[4]));
 
         doc.getElementsByTagName("bands")[0].appendChild(band);
       }
@@ -55,12 +55,13 @@ MAParser.prototype = {
 
   // Returns true if the supplied markup represents a "No Results" page.
   is_no_results_page : function(html) {
-    return true;
+    var no_results_matcher = /\<.*?\>(\n)?no\sresults\sfound\.\<\/.*?\>/im;
+    return no_results_matcher.test(html);
   },
 
   // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
-  // client-side in the case of only one result being found. This method will parse the returned
-  // markup and extract the band ID that we need.
+  // client-side in the case of only one result being found (2x200 instead of 1x301). This method
+  // will parse the returned markup and extract the band ID that we need.
   find_band_in_single_result : function(html) {
     var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'band\.php\?id\=(\d+)\'\;\<\/script\>/;
     var id = id_extractor.exec(html);
@@ -72,4 +73,16 @@ MAParser.prototype = {
 var components = [MAParser];
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule(components);
+}
+
+// Cleans out the unnecessary data from the "altername names" markup chunk.
+function clean_alternate_name_data(html) {
+  if (html) {
+    var names_extractor = /^\<i\>.+\<\/i\>(.*)$/;
+    var names_match = names_extractor.exec(html);
+
+    return names_match[1].replace(/\<[\/]?strong\>/g, '');
+  } else {
+    return "";
+  }
 }
