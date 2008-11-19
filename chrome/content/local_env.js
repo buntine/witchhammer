@@ -48,6 +48,9 @@ var local_env = {
     // The histogram is identical to the one in urldecode.
     histogram["!"]   = "%21";
     histogram["%20"] = "+";
+
+    // Umlauts.
+    histogram["%C3%B6"] = "%F6";
     
     // Begin with encodeURIComponent, which most resembles PHP's encoding functions
     ret = encodeURIComponent(ret);
@@ -61,7 +64,7 @@ var local_env = {
     return ret.replace(/(\%([a-z0-9]{2}))/g, function(full, m1, m2) {
       return "%"+m2.toUpperCase();
     });
-    
+
     return ret;
   }
 

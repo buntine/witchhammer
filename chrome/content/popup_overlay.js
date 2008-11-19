@@ -22,46 +22,46 @@ var event_handler = {
     var selection = local_env.urlencode(getBrowserSelection());
     var url = this.root_url + "/search.php?string=" + selection + "&type=band";
 
-      netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-      var request = new XMLHttpRequest();
+    var request = new XMLHttpRequest();
 
-      request.open("GET", url, true);
-      request.onreadystatechange = function (aEvt) {
-        if (request.readyState == 4) {
-          if(request.status == 200) {
-            var ma_parser = Components.classes["@andrewbuntine.com/ma_parser;1"].getService().wrappedJSObject;
-            var filepath = local_env.build_path(["chrome", "content", "tmp", "bands.xml"]);
-            var success = ma_parser.parse_and_store(request.responseText, local_env.get_extension_path().path + filepath);
+    request.open("GET", url, true);
+    request.onreadystatechange = function (aEvt) {
+      if (request.readyState == 4) {
+        if(request.status == 200) {
+          var ma_parser = Components.classes["@andrewbuntine.com/ma_parser;1"].getService().wrappedJSObject;
+          var filepath = local_env.build_path(["chrome", "content", "tmp", "bands.xml"]);
+          var success = ma_parser.parse_and_store(request.responseText, local_env.get_extension_path().path + filepath);
 
-            // Display frame with results.
-            if (success) {
-              var params = { out : null };
-              window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal", params).focus();
+          // Display frame with results.
+          if (success) {
+            var params = { out : null };
+            window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal", params).focus();
 
-              // User selected one or more bands and clicked "ok".
-              if (params.out)
-                event_handler.display_bands(params.out);
+            // User selected one or more bands and clicked "ok".
+            if (params.out)
+              event_handler.display_bands(params.out);
 
-            } else if (ma_parser.is_no_results_page(request.responseText)) {
-              local_env.display_alert("No bands found!");
+          } else if (ma_parser.is_no_results_page(request.responseText)) {
+            local_env.display_alert("No bands found!");
 
-            // Finally, make sure the failure was not because only one band
-            // was found (MA simply returns a JavaScript redirect in this case).
-            } else {
-              var band_id = ma_parser.find_band_in_single_result(request.responseText);
+          // Finally, make sure the failure was not because only one band
+          // was found (MA simply returns a JavaScript redirect in this case).
+          } else {
+            var band_id = ma_parser.find_band_in_single_result(request.responseText);
 
-              if (band_id > 0)
-                event_handler.display_band_in_tab(band_id);
-              else
-                local_env.display_alert("Could not parse Metal Archives results page!");
-            }
-          } else
-            local_env.display_alert("Error loading page");
-        }
-      };
+            if (band_id > 0)
+              event_handler.display_band_in_tab(band_id);
+            else
+              local_env.display_alert("Could not parse Metal Archives results page!");
+          }
+        } else
+          local_env.display_alert("Error loading page");
+      }
+    };
 
-      request.send(null);
+    request.send(null);
   },
 
   display_bands : function(bands) {
