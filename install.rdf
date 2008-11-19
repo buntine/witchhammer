@@ -8,12 +8,10 @@
     <em:version>1.0</em:version>
     <em:type>2</em:type>
    
-    <!-- Target Application this extension can install into, 
-         with minimum and maximum supported versions. --> 
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
-        <em:minVersion>2.0</em:minVersion>
+        <em:minVersion>3.0</em:minVersion>
         <em:maxVersion>3.0.*</em:maxVersion>
       </Description>
     </em:targetApplication>
@@ -21,7 +19,7 @@
     <!-- Front End MetaData -->
     <em:name>Witchhammer</em:name>
     <em:description>An extension that allows you to select some text, right-click, and easily search the metal-archives.com band database.</em:description>
-    <em:creator>Andrew Buntine Here</em:creator>
+    <em:creator>Andrew Buntine</em:creator>
     <em:homepageURL>http://www.andrewbuntine.com/</em:homepageURL>
   </Description>
 </RDF>
