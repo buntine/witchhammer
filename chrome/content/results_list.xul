@@ -13,7 +13,8 @@
   <tree id="witchhammer_results_tree" flex="1" rows="15">
 
     <treecols>
-      <treecol id="witchhammer_results_name" label="Band" flex="1" />
+      <treecol fixed="false" id="witchhammer_results_name" label="Band" flex="1" />
+      <splitter />
       <treecol id="witchhammer_results_alt" label="Alternate/Old names" flex="2" />
     </treecols>
 
