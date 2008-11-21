@@ -51,6 +51,8 @@ var local_env = {
 
     // Umlauts.
     histogram["%C3%B6"] = "%F6";
+    histogram["%C3%A4"] = "%E4";
+    histogram["%C3%BC"] = "%FC";
     
     // Begin with encodeURIComponent, which most resembles PHP's encoding functions
     ret = encodeURIComponent(ret);
