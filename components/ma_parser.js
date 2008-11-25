@@ -1,3 +1,11 @@
+
+// Parses the numerous results pages and translates the information we need into easy-to-use XML files.
+//
+// Abstracting the dirty details into a component keeps the Witchhammer extension much cleaner and
+// allows me to make use of the native XML datasource binding available in most XUL components.
+// Alos, if the parsed website modifies its markup, it's just a matter of updating the appropriate
+// data in this file.
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function MAParser() { this.wrappedJSObject = this; }
@@ -12,12 +20,7 @@ MAParser.prototype = {
     this.html = html;
   },
 
-  // Parses the results page and translates the information we need into a easy-to-use XML file.
-  // Abstracting the dirty details into a component keeps the Witchhammer extension much cleaner
-  // If the parsed website modifies its markup, it's just a matter of updating the appropriate data
-  // in this file.
-  parse_and_store : function(filepath) {
-
+  compile_band_data : function(filepath) {
     var table = /\<table(.*)\>.+\<\/table\>/;
     var tables = table.exec(this.html);
 
@@ -25,9 +28,7 @@ MAParser.prototype = {
       return false;
     else {
       var band_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?\<a href\=\'band\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<td.*?\>+?(.*?)\<\/td\>\<\/tr\>/g;
-      var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"].createInstance(Components.interfaces.nsIDOMParser);
-      var serializer = Components.classes["@mozilla.org/xmlextras/xmlserializer;1"].createInstance(Components.interfaces.nsIDOMSerializer);
-      var doc = parser.parseFromString("<bands></bands>", "text/xml");
+      var doc = initialise_dom("<bands></bands>");
       
       // Generate XML contents for each search result.
       while ((band_data = band_extractor.exec(tables[0])) != null) {
@@ -40,18 +41,7 @@ MAParser.prototype = {
         doc.getElementsByTagName("bands")[0].appendChild(band);
       }
 
-      var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
-      var stream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
-
-      // Open local file for reading/writing.
-      file.initWithPath(filepath);
-
-      // Open output stream for writing(0x02), creating(0x08) and truncating(0x20).
-      stream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
-
-      // Serialize and write contents and close stream.
-      serializer.serializeToStream(doc, stream, "");
-      stream.close();
+      write_dom_to_output_stream(filepath, doc);
 
       return true;
     }
@@ -77,6 +67,27 @@ MAParser.prototype = {
 var components = [MAParser];
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule(components);
+}
+
+function write_dom_to_output_stream(filepath, doc) {
+  var serializer = Components.classes["@mozilla.org/xmlextras/xmlserializer;1"].createInstance(Components.interfaces.nsIDOMSerializer);
+  var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+  var stream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
+
+  // Open local file for reading/writing.
+  file.initWithPath(filepath);
+
+  // Open output stream for writing(0x02), creating(0x08) and truncating(0x20).
+  stream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
+
+  // Serialize and write contents and close stream.
+  serializer.serializeToStream(doc, stream, "");
+  stream.close();
+}
+
+function initialise_dom(contents) {
+  var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"].createInstance(Components.interfaces.nsIDOMParser);
+  return parser.parseFromString(contents, "text/xml");
 }
 
 // Cleans out the unnecessary data from the "altername names" markup chunk.

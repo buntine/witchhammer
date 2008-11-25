@@ -52,16 +52,11 @@ var event_handler = {
 
   overlay_band_data : function(ma_parser) {
     var filepath = local_env.build_path(["chrome", "content", "tmp", "bands.xml"]);
-    var success = ma_parser.parse_and_store(local_env.get_extension_path().path + filepath);
+    var success = ma_parser.compile_band_data(local_env.get_extension_path().path + filepath);
 
     // Display frame with results.
     if (success) {
-      var params = { out : null };
-      window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal", params).focus();
-
-      // User selected one or more bands and clicked "ok".
-      if (params.out)
-        this.display_tab_group("band", params.out);
+      this.display_results_list("band");
 
     } else if (ma_parser.is_no_results_page()) {
       local_env.display_alert("No bands found!");
@@ -80,16 +75,11 @@ var event_handler = {
 
   overlay_album_data : function(ma_parser) {
     var filepath = local_env.build_path(["chrome", "content", "tmp", "albums.xml"]);
-    var success = ma_parser.parse_and_store(local_env.get_extension_path().path + filepath);
+    var success = ma_parser.compile_album_data(local_env.get_extension_path().path + filepath);
 
     // Display frame with results.
     if (success) {
-      var params = { out : null };
-      window.openDialog("chrome://witchhammer/content/results_list.xul", "Witchhammer Results", "centerscreen,chrome,dialog,modal", params).focus();
-
-      // User selected one or more bands and clicked "ok".
-      if (params.out)
-        this.display_tab_group("album", params.out);
+      this.display_results_list("album");
 
     } else if (ma_parser.is_no_results_page()) {
       local_env.display_alert("No albums found!");
@@ -104,6 +94,17 @@ var event_handler = {
       else
         local_env.display_alert("Could not parse Metal Archives results page!");
     }
+  },
+
+  display_results_list : function(type) {
+    var title = "Witchhammer " + type + " Results";
+    var file = "chrome://witchhammer/content/results_list.xul";
+    var params = { out : null };
+    window.openDialog(file, title, "centerscreen,chrome,dialog,modal", params).focus();
+
+    // User selected one or more bands and clicked "ok".
+    if (params.out)
+      this.display_tab_group(type, params.out);
   },
 
   display_tab_group : function(page, ids) {
