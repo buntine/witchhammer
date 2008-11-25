@@ -8,7 +8,12 @@
   <script type="application/x-javascript" src="chrome://witchhammer/content/local_env.js" />
 
   <popup id="contentAreaContextMenu">
-    <menuitem id="witchhammer_search_item" label="Find at Metal Archives" />
+    <menu id="witchhammer_menu" label="Find at Metal Archives">
+      <menupopup id="witchhammer_submenu">
+        <menuitem id="witchhammer_submenu_bands" label="Bands..." />
+        <menuitem id="witchhammer_submenu_albums" label="Albums..." />
+      </menupopup>
+    </menu>
   </popup>
 
   <popupset id="mainPopupSet"> 		
