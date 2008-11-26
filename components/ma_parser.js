@@ -47,6 +47,45 @@ MAParser.prototype = {
     }
   },
 
+  compile_album_data : function(filepath) {
+    var table = /\<table(.*)\>.+\<\/table\>/;
+    var tables = table.exec(this.html);
+
+    if ( !tables)
+      return false;
+    else {
+      var album_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?(.*?)\<\/td\>\<td.*?\>+?\<a href=\'release\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<\/tr\>/g;
+      var doc = initialise_dom("<albums></albums>");
+      
+      // Generate XML contents for each search result.
+      while ((album_data = album_extractor.exec(tables[0])) != null) {
+        var album = doc.createElement("album");
+
+        album.setAttribute("id", album_data[2]);
+        album.setAttribute("band_name", album_data[3]);
+        album.setAttribute("album_name", filter_strong_elements(album_data[4]));
+
+        doc.getElementsByTagName("albums")[0].appendChild(album);
+      }
+
+      write_dom_to_output_stream(filepath, doc);
+
+      return true;
+    }
+  },
+
+  // Just a convenience method. I am intentionally not using eval.
+  compile_data : function(type, filepath) {
+    switch ( type ) {
+      case "band":
+        return this.compile_band_data(filepath);
+        break;
+      case "album":
+        return this.compile_album_data(filepath);
+        break;
+    }
+  },
+
   // Returns true if the supplied markup represents a "No Results" page.
   is_no_results_page : function() {
     var no_results_matcher = /\<.*?\>(\n)?no\sresults\sfound\.\<\/.*?\>/im;
@@ -55,9 +94,9 @@ MAParser.prototype = {
 
   // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
   // client-side in the case of only one result being found (2x200 instead of 1x301). This method
-  // will parse the returned markup and extract the band ID that we need.
-  find_band_in_single_result : function() {
-    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'band\.php\?id\=(\d+)\'\;\<\/script\>/;
+  // will parse the returned markup and extract the ID that we need.
+  find_id_in_single_result : function() {
+    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'[band|release]\.php\?id\=(\d+)\'\;\<\/script\>/;
     var id = id_extractor.exec(this.html);
 
     return (id) ? parseInt(id[1]) : 0;
@@ -96,8 +135,14 @@ function clean_alternate_name_data(html) {
     var names_extractor = /^\<i\>.+\<\/i\>(.*)$/;
     var names_match = names_extractor.exec(html);
 
-    return names_match[1].replace(/\<[\/]?strong\>/g, '');
+    return filter_strong_elements(names_match[1]);
   } else {
     return "";
   }
+}
+
+// Cleans out strong elements from the passed in markup.
+function filter_strong_elements(html) {
+  if (html)
+    return html.replace(/\<[\/]?strong\>/g, '');
 }

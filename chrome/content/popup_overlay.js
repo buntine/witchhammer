@@ -28,81 +28,54 @@ var event_handler = {
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
+    // Setup event to handle AJAX response.
     request.onreadystatechange = function (event) {
-      if (request.readyState == 4) {
-        if(request.status == 200) {
-          var ma_parser = Components.classes["@andrewbuntine.com/ma_parser;1"].getService().wrappedJSObject;
-          ma_parser.set_markup(request.responseText);
-
-          switch ( type ) {
-            case "band":
-              event_handler.overlay_band_data(ma_parser);
-              break;
-            case "album":
-              event_handler.overlay_album_data(ma_parser);
-              break;
-          }
-        } else
+      if (request.readyState == 4)
+        if(request.status == 200)
+          event_handler.overlay_data(type, request.responseText)
+        else
           local_env.display_alert("Error loading page");
-      }
     }
 
     request.send(null);
   },
 
-  overlay_band_data : function(ma_parser) {
-    var filepath = local_env.build_path(["chrome", "content", "tmp", "bands.xml"]);
-    var success = ma_parser.compile_band_data(local_env.get_extension_path().path + filepath);
+  overlay_data : function(type, html) {
+    var ma_parser = Components.classes["@andrewbuntine.com/ma_parser;1"].getService().wrappedJSObject;
+    ma_parser.set_markup(html);
+
+    var plural_type = type + "s";
+    var filepath = local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
+    var success = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
 
     // Display frame with results.
     if (success) {
-      this.display_results_list("band");
+      this.display_results_list(type);
 
+    // If nothing was found, just inform the user.
     } else if (ma_parser.is_no_results_page()) {
-      local_env.display_alert("No bands found!");
+      local_env.display_alert("No " + plural_type + " found!");
 
-    // Finally, make sure the failure was not because only one band
+    // Finally, make sure the failure was not because only one result
     // was found (MA simply returns a JavaScript redirect in this case).
     } else {
-      var band_id = ma_parser.find_band_in_single_result();
+      var id = ma_parser.find_id_in_single_result();
 
-      if (band_id > 0)
-        this.display_new_tab_for("band", band_id);
-      else
-        local_env.display_alert("Could not parse Metal Archives results page!");
-    }
-  },
-
-  overlay_album_data : function(ma_parser) {
-    var filepath = local_env.build_path(["chrome", "content", "tmp", "albums.xml"]);
-    var success = ma_parser.compile_album_data(local_env.get_extension_path().path + filepath);
-
-    // Display frame with results.
-    if (success) {
-      this.display_results_list("album");
-
-    } else if (ma_parser.is_no_results_page()) {
-      local_env.display_alert("No albums found!");
-
-    // Finally, make sure the failure was not because only one band
-    // was found (MA simply returns a JavaScript redirect in this case).
-    } else {
-      var album_id = ma_parser.find_album_in_single_result();
-
-      if (album_id > 0)
-        this.display_new_tab_for("album", album_id);
+      if (id > 0)
+        this.display_new_tab_for(type, id);
       else
         local_env.display_alert("Could not parse Metal Archives results page!");
     }
   },
 
   display_results_list : function(type) {
+    var capitalized_type = type.charAt(0).toUpperCase() + type.substr(1);
     var title = "Witchhammer " + type + " Results";
     var file = "chrome://witchhammer/content/results_list.xul";
     var params = { out : null };
     window.openDialog(file, title, "centerscreen,chrome,dialog,modal", params).focus();
 
-    // User selected one or more bands and clicked "ok".
+    // User selected one or more items and clicked "ok".
     if (params.out)
       this.display_tab_group(type, params.out);
   },
