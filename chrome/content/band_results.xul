@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="witchhammer_results_list"
+        title="Witchhammer Band Results"
+        buttons="accept,cancel"
+        width="600" height="360">
+
+  <script type="application/x-javascript" src="chrome://witchhammer/content/results_handler.js"/>
+
+  <tree id="witchhammer_results_tree" flex="1" rows="15">
+
+    <treecols>
+      <treecol fixed="false" id="witchhammer_results_name" label="Band" flex="1" />
+      <splitter />
+      <treecol id="witchhammer_results_alt" label="Alternate/Old names" flex="2" />
+    </treecols>
+
+    <treechildren datasources="tmp/bands.xml" ref="*" querytype="xml">
+      <template>
+        <query expr="band" />
+        <action>
+          <treeitem class="?id" uri="?">
+            <treerow> 
+              <treecell label="?name" />
+              <treecell label="?alt" />
+            </treerow>
+          </treeitem>
+        </action>
+      </template>
+    </treechildren>
+
+  </tree>
+
+</dialog>

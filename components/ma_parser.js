@@ -54,15 +54,15 @@ MAParser.prototype = {
     if ( !tables)
       return false;
     else {
-      var album_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?(.*?)\<\/td\>\<td.*?\>+?\<a href=\'release\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<\/tr\>/g;
+      var album_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?\<a.*?\>(.*?)\<\/a\>\<\/td\>\<td.*?\>+?\<a href=\'release\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<\/tr\>/g;
       var doc = initialise_dom("<albums></albums>");
       
       // Generate XML contents for each search result.
       while ((album_data = album_extractor.exec(tables[0])) != null) {
         var album = doc.createElement("album");
 
-        album.setAttribute("id", album_data[2]);
-        album.setAttribute("band_name", album_data[3]);
+        album.setAttribute("id", album_data[3]);
+        album.setAttribute("band_name", album_data[2]);
         album.setAttribute("album_name", filter_strong_elements(album_data[4]));
 
         doc.getElementsByTagName("albums")[0].appendChild(album);
@@ -96,10 +96,10 @@ MAParser.prototype = {
   // client-side in the case of only one result being found (2x200 instead of 1x301). This method
   // will parse the returned markup and extract the ID that we need.
   find_id_in_single_result : function() {
-    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'[band|release]\.php\?id\=(\d+)\'\;\<\/script\>/;
+    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'(band|release)\.php\?id\=(\d+)\'\;\<\/script\>/;
     var id = id_extractor.exec(this.html);
 
-    return (id) ? parseInt(id[1]) : 0;
+    return (id) ? parseInt(id[2]) : 0;
   }
 };
 

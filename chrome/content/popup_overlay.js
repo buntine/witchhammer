@@ -34,7 +34,7 @@ var event_handler = {
         if(request.status == 200)
           event_handler.overlay_data(type, request.responseText)
         else
-          local_env.display_alert("Error loading page");
+          local_env.display_alert("Error loading page! Make sure the site is up.");
     }
 
     request.send(null);
@@ -54,7 +54,7 @@ var event_handler = {
 
     // If nothing was found, just inform the user.
     } else if (ma_parser.is_no_results_page()) {
-      local_env.display_alert("No " + plural_type + " found!");
+      local_env.display_alert("No " + plural_type + " found, thrasher!");
 
     // Finally, make sure the failure was not because only one result
     // was found (MA simply returns a JavaScript redirect in this case).
@@ -69,11 +69,9 @@ var event_handler = {
   },
 
   display_results_list : function(type) {
-    var capitalized_type = type.charAt(0).toUpperCase() + type.substr(1);
-    var title = "Witchhammer " + type + " Results";
-    var file = "chrome://witchhammer/content/results_list.xul";
+    var file = "chrome://witchhammer/content/" + type + "_results.xul";
     var params = { out : null };
-    window.openDialog(file, title, "centerscreen,chrome,dialog,modal", params).focus();
+    window.openDialog(file, "", "centerscreen,chrome,dialog,modal", params).focus();
 
     // User selected one or more items and clicked "ok".
     if (params.out)
