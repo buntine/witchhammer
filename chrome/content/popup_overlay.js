@@ -6,8 +6,6 @@ var event_handler = {
   init : function() {
     this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_menu");
-    this.results_panel = document.getElementById("witchhammer_results_panel");
-    this.results_frame = document.getElementById("witchhammer_results_frame");
 
     // Attach event handlers.
     document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { event_handler.on_menu_opening(); }, false);
