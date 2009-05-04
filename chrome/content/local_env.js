@@ -33,6 +33,11 @@ var local_env = {
     prompts.alert(null, "Witchhammer", message);
   },
 
+  // Changes the documents cursor.
+  set_cursor : function(type) {
+    window.content.document.getElementsByTagName("html")[0].style.cursor = type;
+  },
+
   // Smart URL encode.
   // From: http://kevin.vanzonneveld.net
   urlencode : function (str) {

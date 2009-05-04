@@ -26,13 +26,18 @@ var event_handler = {
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
+    local_env.set_cursor('progress');
+
     // Setup event to handle AJAX response.
     request.onreadystatechange = function (event) {
-      if (request.readyState == 4)
+      if (request.readyState == 4) {
+        local_env.set_cursor('default');
+
         if(request.status == 200)
           event_handler.overlay_data(type, request.responseText)
         else
           local_env.display_alert("Error loading page! Make sure the site is up.");
+      }
     }
 
     request.send(null);
