@@ -11,6 +11,7 @@ var event_handler = {
     document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { event_handler.on_menu_opening(); }, false);
     document.getElementById("witchhammer_submenu_bands").addEventListener("command", function() { event_handler.on_search_item_clicked("band"); }, false);
     document.getElementById("witchhammer_submenu_albums").addEventListener("command", function() { event_handler.on_search_item_clicked("album"); }, false);
+    document.getElementById("witchhammer_submenu_songs").addEventListener("command", function() { event_handler.on_search_item_clicked("song"); }, false);
   },
 
   on_menu_opening : function() {
@@ -88,7 +89,7 @@ var event_handler = {
 
   display_new_tab_for : function(page, id) {
     // Just to conform with metal-archives.com file structure.
-    if ( page == "album" ) { page = "release"; }
+    if ( page == "album" || page == "song" ) { page = "release"; }
 
     getBrowser().addTab(event_handler.root_url + "/" + page + ".php?id=" + id);
   }

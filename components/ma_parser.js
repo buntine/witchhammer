@@ -3,7 +3,7 @@
 //
 // Abstracting the dirty details into a component keeps the Witchhammer extension much cleaner and
 // allows me to make use of the native XML datasource binding available in most XUL components.
-// Alos, if the parsed website modifies its markup, it's just a matter of updating the appropriate
+// Also, if the parsed website modifies its markup, it's just a matter of updating the appropriate
 // data in this file.
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -74,6 +74,34 @@ MAParser.prototype = {
     }
   },
 
+  compile_song_data : function(filepath) {
+    var table = /\<table(.*)\>.+\<\/table\>/;
+    var tables = table.exec(this.html);
+
+    if ( !tables)
+      return false;
+    else {
+      var song_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?\<a.*?\>(.*?)\<\/a\>\<\/td\>\<td.*?\>+?\<a href=\'release\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<td.*?\>(.*?)\<\/td\>\<\/tr\>/g;
+      var doc = initialise_dom("<songs></songs>");
+      
+      // Generate XML contents for each search result.
+      while ((song_data = song_extractor.exec(tables[0])) != null) {
+        var song = doc.createElement("song");
+
+        song.setAttribute("id", song_data[3]);
+        song.setAttribute("band_name", song_data[2]);
+        song.setAttribute("album_name", filter_strong_elements(song_data[4]));
+        song.setAttribute("song_name", filter_strong_elements(song_data[5]));
+
+        doc.getElementsByTagName("songs")[0].appendChild(song);
+      }
+
+      write_dom_to_output_stream(filepath, doc);
+
+      return true;
+    }
+  },
+
   // Just a convenience method. I am intentionally not using eval.
   compile_data : function(type, filepath) {
     switch ( type ) {
@@ -82,6 +110,9 @@ MAParser.prototype = {
         break;
       case "album":
         return this.compile_album_data(filepath);
+        break;
+      case "song":
+        return this.compile_song_data(filepath);
         break;
     }
   },

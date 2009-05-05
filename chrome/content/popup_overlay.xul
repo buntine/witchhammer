@@ -12,6 +12,7 @@
       <menupopup id="witchhammer_submenu">
         <menuitem id="witchhammer_submenu_bands" label="Bands..." />
         <menuitem id="witchhammer_submenu_albums" label="Albums..." />
+        <menuitem id="witchhammer_submenu_songs" label="Songs..." />
       </menupopup>
     </menu>
   </popup>
