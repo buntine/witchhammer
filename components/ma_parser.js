@@ -11,7 +11,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 function MAParser() { this.wrappedJSObject = this; }
 
 MAParser.prototype = {
-  classDescription: "A component that parses search results from metal-archives.com and formats them into a traversible XML document.",
+  classDescription: "A component that parses search results from metal-archives.com and formats them into a traversible XML document. A poor-mans API.",
   classID:          Components.ID("{ae910a75-1f06-49cb-b853-cc0b9585ede6}"),
   contractID:       "@andrewbuntine.com/ma_parser;1",
   QueryInterface: XPCOMUtils.generateQI(),
@@ -21,8 +21,7 @@ MAParser.prototype = {
   },
 
   compile_band_data : function(filepath) {
-    var table = /\<table(.*)\>.+\<\/table\>/;
-    var tables = table.exec(this.html);
+    var tables = this.fetch_tables();
 
     if ( !tables)
       return false;
@@ -48,8 +47,7 @@ MAParser.prototype = {
   },
 
   compile_album_data : function(filepath) {
-    var table = /\<table(.*)\>.+\<\/table\>/;
-    var tables = table.exec(this.html);
+    var tables = this.fetch_tables();
 
     if ( !tables)
       return false;
@@ -75,8 +73,7 @@ MAParser.prototype = {
   },
 
   compile_song_data : function(filepath) {
-    var table = /\<table(.*)\>.+\<\/table\>/;
-    var tables = table.exec(this.html);
+    var tables = this.fetch_tables();
 
     if ( !tables)
       return false;
@@ -102,25 +99,23 @@ MAParser.prototype = {
     }
   },
 
-  // Just a convenience method. I am intentionally not using eval.
+  // Just a convenience method so I don't need evals or case statements anywhere else.
   compile_data : function(type, filepath) {
-    switch ( type ) {
-      case "band":
-        return this.compile_band_data(filepath);
-        break;
-      case "album":
-        return this.compile_album_data(filepath);
-        break;
-      case "song":
-        return this.compile_song_data(filepath);
-        break;
-    }
+    valid_types = /^(band|album|song)$/;
+    if ( valid_types.test(type) ) 
+      return eval("this.compile_" + type + "_data(filepath)");
   },
 
   // Returns true if the supplied markup represents a "No Results" page.
   is_no_results_page : function() {
     var no_results_matcher = /\<.*?\>(\n)?no\sresults\sfound\.\<\/.*?\>/im;
     return no_results_matcher.test(this.html);
+  },
+
+  // Returns an array of matching tables in the HTML.
+  fetch_tables : function() {
+    var table = /\<table(.*)\>.+\<\/table\>/;
+    return table.exec(this.html);
   },
 
   // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
