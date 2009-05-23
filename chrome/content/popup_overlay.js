@@ -1,24 +1,31 @@
 
-window.addEventListener("load", function() { event_handler.init(); }, false);
+// Setup my namespace...
+if(!com) var com={};
+if(!com.andrewbuntine) com.andrewbuntine={};
+if(!com.andrewbuntine.witchhammer) com.andrewbuntine.witchhammer={};
 
-var event_handler = {
+window.addEventListener("load", function() { com.andrewbuntine.witchhammer.event_handler.init(); }, false);
 
-  init : function() {
+com.andrewbuntine.witchhammer.event_handler = function(){
+
+  var pub = {};
+
+  pub.init = function() {
     this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_menu");
 
     // Attach event handlers.
-    document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { event_handler.on_menu_opening(); }, false);
-    document.getElementById("witchhammer_submenu_bands").addEventListener("command", function() { event_handler.on_search_item_clicked("band"); }, false);
-    document.getElementById("witchhammer_submenu_albums").addEventListener("command", function() { event_handler.on_search_item_clicked("album"); }, false);
-    document.getElementById("witchhammer_submenu_songs").addEventListener("command", function() { event_handler.on_search_item_clicked("song"); }, false);
-  },
+    document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { pub.on_menu_opening(); }, false);
+    document.getElementById("witchhammer_submenu_bands").addEventListener("command", function() { pub.on_search_item_clicked("band"); }, false);
+    document.getElementById("witchhammer_submenu_albums").addEventListener("command", function() { pub.on_search_item_clicked("album"); }, false);
+    document.getElementById("witchhammer_submenu_songs").addEventListener("command", function() { pub.on_search_item_clicked("song"); }, false);
+  };
 
-  on_menu_opening : function() {
+  pub.on_menu_opening = function() {
     this.menu_item.disabled = (getBrowserSelection().length == 0);
-  },
+  };
 
-  on_search_item_clicked : function(type) {
+  pub.on_search_item_clicked = function(type) {
     var selection = local_env.urlencode(getBrowserSelection());
     var url = this.root_url + "/search.php?string=" + selection + "&type=" + type;
 
@@ -35,16 +42,16 @@ var event_handler = {
         local_env.set_cursor('default');
 
         if(request.status == 200)
-          event_handler.overlay_data(type, request.responseText)
+          pub.overlay_data(type, request.responseText)
         else
           local_env.display_alert("Error loading page! Make sure the site is up.");
       }
     }
 
     request.send(null);
-  },
+  };
 
-  overlay_data : function(type, html) {
+  pub.overlay_data = function(type, html) {
     var ma_parser = Components.classes["@andrewbuntine.com/ma_parser;1"].getService().wrappedJSObject;
     ma_parser.set_markup(html);
 
@@ -70,9 +77,9 @@ var event_handler = {
       else
         local_env.display_alert("Could not parse Metal Archives results page!");
     }
-  },
+  };
 
-  display_results_list : function(type) {
+  pub.display_results_list = function(type) {
     var file = "chrome://witchhammer/content/" + type + "_results.xul";
     var params = { out : null };
     window.openDialog(file, "", "centerscreen,chrome,dialog,modal", params).focus();
@@ -80,18 +87,19 @@ var event_handler = {
     // User selected one or more items and clicked "ok".
     if (params.out)
       this.display_tab_group(type, params.out);
-  },
+  };
 
-  display_tab_group : function(page, ids) {
+  pub.display_tab_group = function(page, ids) {
     for (var i=0; i<ids.length; i++)
       this.display_new_tab_for(page, ids[i]);
-  },
+  };
 
-  display_new_tab_for : function(page, id) {
+  pub.display_new_tab_for = function(page, id) {
     // Just to conform with metal-archives.com file structure.
     if ( page == "album" || page == "song" ) { page = "release"; }
 
-    getBrowser().addTab(event_handler.root_url + "/" + page + ".php?id=" + id);
-  }
+    getBrowser().addTab(pub.root_url + "/" + page + ".php?id=" + id);
+  };
 
-};
+  return pub;
+}();
