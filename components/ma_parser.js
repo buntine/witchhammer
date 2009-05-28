@@ -171,4 +171,6 @@ function clean_alternate_name_data(html) {
 function filter_strong_elements(html) {
   if (html)
     return html.replace(/\<[\/]?strong\>/g, '');
+  else
+    return "";
 }

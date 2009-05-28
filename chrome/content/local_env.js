@@ -1,46 +1,52 @@
 
-// Holds (mostly) environment-oriented methods.
+// Defines (mostly) environment-oriented methods.
 
-var local_env = {
+// Setup my extensions namespace.
+if(!com) var com={};
+if(!com.andrewbuntine) com.andrewbuntine={};
+if(!com.andrewbuntine.witchhammer) com.andrewbuntine.witchhammer={};
+
+com.andrewbuntine.witchhammer.local_env = function(){
+  var pub = {};
 
   // Returns users O/S.
-  get_os: function() {
+  pub.get_os = function() {
     return Components.classes["@mozilla.org/xre/app-info;1"]
              .getService(Components.interfaces.nsIXULRuntime).OS; 
-  },
+  };
 
   // Returns the local path where this extension is installed.
-  get_extension_path: function() {
+  pub.get_extension_path = function() {
     const id = "witchhammer@andrewbuntine.com";
 
     return Components.classes["@mozilla.org/extensions/manager;1"]
       .getService(Components.interfaces.nsIExtensionManager)
       .getInstallLocation(id)
       .getItemLocation(id); 
-  },
+  };
 
   // Returns a filepath for the native O/S
-  build_path : function(path) {
-    var seperator = (this.get_os() == "WINNT") ? "\\" : "/";
+  pub.build_path = function(path) {
+    var seperator = (pub.get_os() == "WINNT") ? "\\" : "/";
     return seperator + path.join(seperator);
   },
 
   // Displays a personalised alert.
-  display_alert : function(message) {
+  pub.display_alert = function(message) {
     var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                     .getService(Components.interfaces.nsIPromptService);
 
     prompts.alert(null, "Witchhammer", message);
-  },
+  };
 
   // Changes the documents cursor.
-  set_cursor : function(type) {
+  pub.set_cursor = function(type) {
     window.content.document.getElementsByTagName("html")[0].style.cursor = type;
-  },
+  };
 
   // Smart URL encode.
   // From: http://kevin.vanzonneveld.net
-  urlencode : function (str) {
+  pub.urlencode = function (str) {
     var histogram = {}, histogram_r = {}, code = 0, tmp_arr = [];
     var ret = str.toString();
     
@@ -73,6 +79,7 @@ var local_env = {
     });
 
     return ret;
-  }
+  };
 
-};
+  return pub;
+}();

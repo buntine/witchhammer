@@ -1,18 +1,15 @@
 
-// Setup my namespace...
-if(!com) var com={};
-if(!com.andrewbuntine) com.andrewbuntine={};
-if(!com.andrewbuntine.witchhammer) com.andrewbuntine.witchhammer={};
+// Handles the user interaction with Witchhammer.
 
 window.addEventListener("load", function() { com.andrewbuntine.witchhammer.event_handler.init(); }, false);
 
 com.andrewbuntine.witchhammer.event_handler = function(){
-
   var pub = {};
 
   pub.init = function() {
     this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_menu");
+    this.local_env = com.andrewbuntine.witchhammer.local_env;
 
     // Attach event handlers.
     document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { pub.on_menu_opening(); }, false);
@@ -26,7 +23,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
   };
 
   pub.on_search_item_clicked = function(type) {
-    var selection = local_env.urlencode(getBrowserSelection());
+    var selection = this.local_env.urlencode(getBrowserSelection());
     var url = this.root_url + "/search.php?string=" + selection + "&type=" + type;
 
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -34,17 +31,17 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
-    local_env.set_cursor('progress');
+    this.local_env.set_cursor('progress');
 
     // Setup event to handle AJAX response.
     request.onreadystatechange = function (event) {
       if (request.readyState == 4) {
-        local_env.set_cursor('default');
+        this.local_env.set_cursor('default');
 
         if(request.status == 200)
           pub.overlay_data(type, request.responseText)
         else
-          local_env.display_alert("Error loading page! Make sure the site is up.");
+          this.local_env.display_alert("Error loading page! Make sure the site is up.");
       }
     }
 
@@ -56,16 +53,16 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     ma_parser.set_markup(html);
 
     var plural_type = type + "s";
-    var filepath = local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
-    var success = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
+    var filepath = this.local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
+    var success = ma_parser.compile_data(type, this.local_env.get_extension_path().path + filepath);
 
     // Display frame with results.
     if (success) {
-      this.display_results_list(type);
+      pub.display_results_list(type);
 
     // If nothing was found, just inform the user.
     } else if (ma_parser.is_no_results_page()) {
-      local_env.display_alert("No " + plural_type + " found, thrasher!");
+      this.local_env.display_alert("No " + plural_type + " found, thrasher!");
 
     // Finally, make sure the failure was not because only one result
     // was found (MA simply returns a JavaScript redirect in this case).
@@ -73,9 +70,9 @@ com.andrewbuntine.witchhammer.event_handler = function(){
       var id = ma_parser.find_id_in_single_result();
 
       if (id > 0)
-        this.display_new_tab_for(type, id);
+        pub.display_new_tab_for(type, id);
       else
-        local_env.display_alert("Could not parse Metal Archives results page!");
+        this.local_env.display_alert("Could not parse Metal Archives results page!");
     }
   };
 
@@ -86,12 +83,12 @@ com.andrewbuntine.witchhammer.event_handler = function(){
 
     // User selected one or more items and clicked "ok".
     if (params.out)
-      this.display_tab_group(type, params.out);
+      pub.display_tab_group(type, params.out);
   };
 
   pub.display_tab_group = function(page, ids) {
     for (var i=0; i<ids.length; i++)
-      this.display_new_tab_for(page, ids[i]);
+      pub.display_new_tab_for(page, ids[i]);
   };
 
   pub.display_new_tab_for = function(page, id) {

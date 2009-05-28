@@ -4,8 +4,8 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" >	 	
 
-  <script type="application/x-javascript" src="chrome://witchhammer/content/popup_overlay.js" />
   <script type="application/x-javascript" src="chrome://witchhammer/content/local_env.js" />
+  <script type="application/x-javascript" src="chrome://witchhammer/content/popup_overlay.js" />
 
   <popup id="contentAreaContextMenu">
     <menu id="witchhammer_menu" label="Find at Metal Archives">

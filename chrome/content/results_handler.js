@@ -1,19 +1,22 @@
 
-window.addEventListener("load", function() { results_handler.init(); }, false);
-window.addEventListener("dialogaccept", function() { results_handler.on_dialog_accept(); }, false);
+// Transforms tree selections into something Witchhammer can easily parse.
 
-var results_handler = {
+window.addEventListener("load", function() { com.andrewbuntine.witchhammer.results_handler.init(); }, false);
+window.addEventListener("dialogaccept", function() { com.andrewbuntine.witchhammer.results_handler.on_dialog_accept(); }, false);
 
-  init : function() {
+com.andrewbuntine.witchhammer.results_handler = function(){
+  var pub = {};
+
+  pub.init = function() {
     this.results_tree = document.getElementById("witchhammer_results_tree");
-  },
+  };
 
-  on_dialog_accept : function() {
-    var to_view = this.find_selection_ranges();
+  pub.on_dialog_accept = function() {
+    var to_view = pub.find_selection_ranges();
     window.arguments[0].out = to_view;
-  },
+  };
 
-  find_selection_ranges : function() {
+  pub.find_selection_ranges = function() {
     var selected = new Array();
     var range_count = this.results_tree.view.selection.getRangeCount();
 
@@ -27,6 +30,7 @@ var results_handler = {
     }
 
     return selected;
-  }
+  };
 
-};
+  return pub;
+}();
