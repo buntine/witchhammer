@@ -5,11 +5,11 @@ window.addEventListener("load", function() { com.andrewbuntine.witchhammer.event
 
 com.andrewbuntine.witchhammer.event_handler = function(){
   var pub = {};
+  var local_env = com.andrewbuntine.witchhammer.local_env;
 
   pub.init = function() {
     this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_menu");
-    this.local_env = com.andrewbuntine.witchhammer.local_env;
 
     // Attach event handlers.
     document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { pub.on_menu_opening(); }, false);
@@ -23,7 +23,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
   };
 
   pub.on_search_item_clicked = function(type) {
-    var selection = this.local_env.urlencode(getBrowserSelection());
+    var selection = local_env.urlencode(getBrowserSelection());
     var url = this.root_url + "/search.php?string=" + selection + "&type=" + type;
 
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
@@ -31,17 +31,17 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
-    this.local_env.set_cursor('progress');
+    local_env.set_cursor('progress');
 
     // Setup event to handle AJAX response.
     request.onreadystatechange = function (event) {
       if (request.readyState == 4) {
-        this.local_env.set_cursor('default');
+        local_env.set_cursor('default');
 
         if(request.status == 200)
           pub.overlay_data(type, request.responseText)
         else
-          this.local_env.display_alert("Error loading page! Make sure the site is up.");
+          local_env.display_alert("Error loading page! Make sure the site is up.");
       }
     }
 
@@ -53,8 +53,8 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     ma_parser.set_markup(html);
 
     var plural_type = type + "s";
-    var filepath = this.local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
-    var success = ma_parser.compile_data(type, this.local_env.get_extension_path().path + filepath);
+    var filepath = local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
+    var success = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
 
     // Display frame with results.
     if (success) {
@@ -62,7 +62,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
 
     // If nothing was found, just inform the user.
     } else if (ma_parser.is_no_results_page()) {
-      this.local_env.display_alert("No " + plural_type + " found, thrasher!");
+      local_env.display_alert("No " + plural_type + " found, thrasher!");
 
     // Finally, make sure the failure was not because only one result
     // was found (MA simply returns a JavaScript redirect in this case).
@@ -72,7 +72,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
       if (id > 0)
         pub.display_new_tab_for(type, id);
       else
-        this.local_env.display_alert("Could not parse Metal Archives results page!");
+        local_env.display_alert("Could not parse Metal Archives results page!");
     }
   };
 
