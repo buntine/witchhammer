@@ -1,6 +1,11 @@
 
 // Transforms tree selections into something Witchhammer can easily parse.
 
+// Setup my extensions namespace.
+if(!com) var com={};
+if(!com.andrewbuntine) com.andrewbuntine={};
+if(!com.andrewbuntine.witchhammer) com.andrewbuntine.witchhammer={};
+
 window.addEventListener("load", function() { com.andrewbuntine.witchhammer.results_handler.init(); }, false);
 window.addEventListener("dialogaccept", function() { com.andrewbuntine.witchhammer.results_handler.on_dialog_accept(); }, false);
 

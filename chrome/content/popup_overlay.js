@@ -1,6 +1,11 @@
 
 // Handles the user interaction with Witchhammer.
 
+// Setup my extensions namespace.
+if(!com) var com={};
+if(!com.andrewbuntine) com.andrewbuntine={};
+if(!com.andrewbuntine.witchhammer) com.andrewbuntine.witchhammer={};
+
 window.addEventListener("load", function() { com.andrewbuntine.witchhammer.event_handler.init(); }, false);
 
 com.andrewbuntine.witchhammer.event_handler = function(){
