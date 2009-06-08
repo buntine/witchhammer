@@ -5,7 +5,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>witchhammer@andrewbuntine.com</em:id>
-    <em:version>1.3</em:version>
+    <em:version>1.5</em:version>
     <em:type>2</em:type>
    
     <em:targetApplication>
@@ -18,7 +18,7 @@
    
     <!-- Front End MetaData -->
     <em:name>Witchhammer</em:name>
-    <em:description>An extension that allows you to select some text, right-click, and easily search the metal-archives.com band database.</em:description>
+    <em:description>An extension that allows you to select some text, right-click, and easily search the metal-archives.com database.</em:description>
     <em:creator>Andrew Buntine</em:creator>
     <em:homepageURL>http://www.andrewbuntine.com/</em:homepageURL>
   </Description>
