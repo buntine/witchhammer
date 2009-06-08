@@ -17,11 +17,5 @@
     </menu>
   </popup>
 
-  <popupset id="mainPopupSet"> 		
-    <panel id="witchhammer_results_panel">
-      <iframe id="witchhammer_results_frame" src="chrome://witchhammer/content/results.html" />
-    </panel>
-  </popupset>
-
 </overlay>
 
