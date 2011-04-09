@@ -107,12 +107,14 @@ MAParser.prototype = {
   },
 
   // Returns true if the supplied markup represents a "No Results" page.
+  // ** MARKED FOR DELETION **
   is_no_results_page : function() {
     var no_results_matcher = /\<.*?\>(\n)?no\sresults\sfound\.\<\/.*?\>/im;
     return no_results_matcher.test(this.html);
   },
 
   // Returns an array of matching tables in the HTML.
+  // ** MARKED FOR DELETION **
   fetch_tables : function() {
     var table = /\<table(.*)\>.+\<\/table\>/;
     return table.exec(this.html);
@@ -121,6 +123,7 @@ MAParser.prototype = {
   // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
   // client-side in the case of only one result being found (2x200 instead of 1x301). This method
   // will parse the returned markup and extract the ID that we need.
+  // ** MARKED FOR DELETION **
   find_id_in_single_result : function() {
     var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'(band|release)\.php\?id\=(\d+)\'\;\<\/script\>/;
     var id = id_extractor.exec(this.html);

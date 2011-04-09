@@ -13,35 +13,35 @@ com.andrewbuntine.witchhammer.event_handler = function(){
   var local_env = com.andrewbuntine.witchhammer.local_env;
 
   pub.init = function() {
-    this.root_url = "http://www.metal-archives.com";
+    this.root_url = "http://209.59.186.200/~metalarc";
     this.menu_item = document.getElementById("witchhammer_menu");
 
     // Attach event handlers.
     document.getElementById("contentAreaContextMenu").addEventListener("popupshowing", function() { pub.on_menu_opening(); }, false);
-    document.getElementById("witchhammer_submenu_bands").addEventListener("command", function() { pub.on_search_item_clicked("band"); }, false);
-    document.getElementById("witchhammer_submenu_albums").addEventListener("command", function() { pub.on_search_item_clicked("album"); }, false);
-    document.getElementById("witchhammer_submenu_songs").addEventListener("command", function() { pub.on_search_item_clicked("song"); }, false);
+    document.getElementById("witchhammer_submenu_bands").addEventListener("command", function() { pub.on_search_item_clicked("band", "name"); }, false);
+    document.getElementById("witchhammer_submenu_albums").addEventListener("command", function() { pub.on_search_item_clicked("album", "title"); }, false);
+    document.getElementById("witchhammer_submenu_songs").addEventListener("command", function() { pub.on_search_item_clicked("song", "title"); }, false);
   };
 
   pub.on_menu_opening = function() {
     this.menu_item.disabled = (getBrowserSelection().length == 0);
   };
 
-  pub.on_search_item_clicked = function(type) {
+  pub.on_search_item_clicked = function(type, field) {
     var selection = local_env.urlencode(getBrowserSelection());
-    var url = this.root_url + "/search.php?string=" + selection + "&type=" + type;
+    var url = this.root_url + "/search/ajax-" + type + "-search/?query=" + selection + "&field=" + field;
 
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
-    local_env.set_cursor('progress');
+    local_env.set_cursor("progress");
 
     // Setup event to handle AJAX response.
     request.onreadystatechange = function (event) {
       if (request.readyState == 4) {
-        local_env.set_cursor('default');
+        local_env.set_cursor("default");
 
         if(request.status == 200)
           pub.overlay_data(type, request.responseText)
@@ -59,25 +59,19 @@ com.andrewbuntine.witchhammer.event_handler = function(){
 
     var plural_type = type + "s";
     var filepath = local_env.build_path(["chrome", "content", "tmp", plural_type + ".xml"]);
-    var success = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
+    var parse_status = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
 
-    // Display frame with results.
-    if (success) {
+    // If only one result is found, then it's full URL is returned.
+    if (typeof parse_status == "string")
+        pub.display_new_tab_for(parse_status);
+
+    // Display frame with multiple results.
+    else if (parse_status) {
       pub.display_results_list(type);
 
     // If nothing was found, just inform the user.
-    } else if (ma_parser.is_no_results_page()) {
-      local_env.display_alert("No " + plural_type + " found, thrasher!");
-
-    // Finally, make sure the failure was not because only one result
-    // was found (MA simply returns a JavaScript redirect in this case).
     } else {
-      var id = ma_parser.find_id_in_single_result();
-
-      if (id > 0)
-        pub.display_new_tab_for(type, id);
-      else
-        local_env.display_alert("Could not parse Metal Archives results page!");
+      local_env.display_alert("No " + plural_type + " found, thrasher!");
     }
   };
 
@@ -88,19 +82,16 @@ com.andrewbuntine.witchhammer.event_handler = function(){
 
     // User selected one or more items and clicked "ok".
     if (params.out)
-      pub.display_tab_group(type, params.out);
+      pub.display_tab_group(params.out);
   };
 
-  pub.display_tab_group = function(page, ids) {
-    for (var i=0; i<ids.length; i++)
-      pub.display_new_tab_for(page, ids[i]);
+  pub.display_tab_group = function(urls) {
+    for (var i=0; i<urls.length; i++)
+      pub.display_new_tab_for(urls[i]);
   };
 
-  pub.display_new_tab_for = function(page, id) {
-    // Just to conform with metal-archives.com file structure.
-    if ( page == "album" || page == "song" ) { page = "release"; }
-
-    getBrowser().addTab(pub.root_url + "/" + page + ".php?id=" + id);
+  pub.display_new_tab_for = function(url) {
+    getBrowser().addTab(url);
   };
 
   return pub;
