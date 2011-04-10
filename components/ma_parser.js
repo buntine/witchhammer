@@ -21,21 +21,27 @@ MAParser.prototype = {
   },
 
   compile_band_data : function(filepath) {
-    var tables = this.fetch_tables();
-
-    if ( !tables)
+    try {
+      var bands_data = JSON.parse(this.html);
+    } catch (err) {
       return false;
-    else {
-      var band_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?\<a href\=\'band\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<td.*?\>+?(.*?)\<\/td\>\<\/tr\>/g;
+    }
+
+    // Just return the URL for the first result if it is the only one.
+    if (bands_data["iTotalRecords"] == 1) {
+      return extract_url(bands_data["aaData"][0]);
+    } else {
       var doc = initialise_dom("<bands></bands>");
       
       // Generate XML contents for each search result.
-      while ((band_data = band_extractor.exec(tables[0])) != null) {
+      for (band_data in bands_data["aaData"]) {
         var band = doc.createElement("band");
 
-        band.setAttribute("id", band_data[2]);
-        band.setAttribute("name", band_data[3]);
-        band.setAttribute("alt", clean_alternate_name_data(band_data[4]));
+        band.setAttribute("url", extract_url(band_data[0]));
+        band.setAttribute("name", extract_name(band_data[0]));
+        band.setAttribute("alt", clean_alternate_name_data(band_data[0]));
+        band.setAttribute("genre", band_data[1]);
+        band.setAttribute("country", band_data[2]);
 
         doc.getElementsByTagName("bands")[0].appendChild(band);
       }
