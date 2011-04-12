@@ -49,6 +49,7 @@ com.andrewbuntine.witchhammer.local_env = function(){
   pub.urlencode = function (str) {
     var histogram = {}, histogram_r = {}, code = 0, tmp_arr = [];
     var ret = str.toString();
+    var replace, ret;
     
     var replacer = function(search, replace, str) {
       var tmp_arr = [];

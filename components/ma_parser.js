@@ -17,7 +17,7 @@ MAParser.prototype = {
   QueryInterface: XPCOMUtils.generateQI(),
 
   set_markup : function(html) {
-    this.html = html;
+    this.html = sanitize_response(html);
   },
 
   compile_band_data : function(filepath) {
@@ -34,7 +34,8 @@ MAParser.prototype = {
       var doc = initialise_dom("<bands></bands>");
       
       // Generate XML contents for each search result.
-      for (band_data in bands_data["aaData"]) {
+      for (var i=0; i<bands_data["aaData"].length; i++) {
+        var band_data = bands_data["aaData"][i];
         var band = doc.createElement("band");
 
         band.setAttribute("url", extract_url(band_data[0]));
@@ -107,7 +108,7 @@ MAParser.prototype = {
 
   // Just a convenience method so I don't need evals or case statements anywhere else.
   compile_data : function(type, filepath) {
-    valid_types = /^(band|album|song)$/;
+    var valid_types = /^(band|album|song)$/;
     if ( valid_types.test(type) ) 
       return eval("this.compile_" + type + "_data(filepath)");
   },
@@ -165,21 +166,40 @@ function initialise_dom(contents) {
 }
 
 // Cleans out the unnecessary data from the "altername names" markup chunk.
+  // ** MARKED FOR DELETION **
 function clean_alternate_name_data(html) {
-  if (html) {
-    var names_extractor = /^\<i\>.+\<\/i\>(.*)$/;
-    var names_match = names_extractor.exec(html);
-
-    return filter_strong_elements(names_match[1]);
-  } else {
-    return "";
-  }
+  return "Sack";
+//  if (html) {
+//    var names_extractor = /^\<i\>.+\<\/i\>(.*)$/;
+//    var names_match = names_extractor.exec(html);
+//
+//    return filter_strong_elements(names_match[1]);
+//  } else {
+//    return "";
+//  }
 }
 
 // Cleans out strong elements from the passed in markup.
+  // ** MARKED FOR DELETION **
 function filter_strong_elements(html) {
   if (html)
     return html.replace(/\<[\/]?strong\>/g, '');
   else
     return "";
+}
+
+// Extracts a URL out of an anchor element.
+function extract_url(result) {
+  return "http://fuck.com";
+}
+
+// Extracts a band name out of an anchor element.
+function extract_name(result) {
+  return "Sackdeath";
+}
+
+// At the time of writing, Metal-Archives.com was returning PHP errors at
+// the top of their JSON response. I am filtering it out here.
+function sanitize_response(html) {
+  return html.replace(/^.*\{/, "{");
 }
