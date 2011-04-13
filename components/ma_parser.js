@@ -166,17 +166,14 @@ function initialise_dom(contents) {
 }
 
 // Cleans out the unnecessary data from the "altername names" markup chunk.
-  // ** MARKED FOR DELETION **
-function clean_alternate_name_data(html) {
-  return "Sack";
-//  if (html) {
-//    var names_extractor = /^\<i\>.+\<\/i\>(.*)$/;
-//    var names_match = names_extractor.exec(html);
-//
-//    return filter_strong_elements(names_match[1]);
-//  } else {
-//    return "";
-//  }
+function clean_alternate_name_data(result) {
+  var alt_names = /\(\<strong\>a\.k\.a\.\<\/strong\>\s?(.+)\)/.exec(result);
+
+  if (alt_names) {
+    return alt_names[1];
+  } else {
+    return "";
+  }
 }
 
 // Cleans out strong elements from the passed in markup.
@@ -190,12 +187,14 @@ function filter_strong_elements(html) {
 
 // Extracts a URL out of an anchor element.
 function extract_url(result) {
-  return "http://fuck.com";
+  var url = /^\<a\shref=\"(.+)\"/.exec(result);
+  return url[1];
 }
 
 // Extracts a band name out of an anchor element.
 function extract_name(result) {
-  return "Sackdeath";
+  var name = /^\<a.+\>(.+)\<\/a\>/.exec(result);
+  return name[1];
 }
 
 // At the time of writing, Metal-Archives.com was returning PHP errors at
