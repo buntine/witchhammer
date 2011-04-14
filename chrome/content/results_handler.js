@@ -30,8 +30,10 @@ com.andrewbuntine.witchhammer.results_handler = function(){
       var start = {}; var end = {};
       this.results_tree.view.selection.getRangeAt(i, start, end);
   
-      for(var c=start.value; c<=end.value; c++)
-        selected.push(this.results_tree.view.getItemAtIndex(c).className);
+      for(var c=start.value; c<=end.value; c++) {
+        selected.push(this.results_tree.view.getItemAtIndex(c)
+          .firstElementChild.firstElementChild.attributes["value"].value);
+      }
     }
 
     return selected;
