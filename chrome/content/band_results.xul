@@ -6,7 +6,7 @@
         id="witchhammer_results_list"
         title="Witchhammer Band Results"
         buttons="accept,cancel"
-        width="600" height="360">
+        width="750" height="380">
 
   <script type="application/x-javascript" src="chrome://witchhammer/content/results_handler.js"/>
 
@@ -14,6 +14,10 @@
 
     <treecols>
       <treecol fixed="false" id="witchhammer_results_name" label="Band" flex="1" />
+      <splitter />
+      <treecol id="witchhammer_results_genre" label="Genre" flex="1" />
+      <splitter />
+      <treecol id="witchhammer_results_country" label="Country" flex="1" />
       <splitter />
       <treecol id="witchhammer_results_alt" label="Alternate/Old names" flex="2" />
     </treecols>
@@ -24,7 +28,9 @@
         <action>
           <treeitem class="?id" uri="?">
             <treerow> 
-              <treecell label="?name" />
+              <treecell label="?name" value="?url" />
+              <treecell label="?genre" />
+              <treecell label="?country" />
               <treecell label="?alt" />
             </treerow>
           </treeitem>
