@@ -25,7 +25,7 @@ MAParser.prototype = {
 
     // Just return the URL for the first result if it is the only one.
     if (bands_data["iTotalRecords"] === 1) {
-      return extract_url(bands_data["aaData"][0]);
+      return extract_url(bands_data["aaData"][0][0]);
     } else {
       var doc = initialise_dom("<bands></bands>");
       
@@ -50,6 +50,33 @@ MAParser.prototype = {
   },
 
   compile_album_data : function(filepath) {
+    try { var albums_data = JSON.parse(this.html); } catch (e) { return false; }
+
+    // Just return the URL for the first result if it is the only one.
+    if (albums_data["iTotalRecords"] === 1) {
+      return extract_url(albums_data["aaData"][0][1]);
+    } else {
+      var doc = initialise_dom("<albums></albums>");
+      
+      // Generate XML contents for each search result.
+      for (var i=0; i<albums_data["aaData"].length; i++) {
+        var album_data = albums_data["aaData"][i];
+        var album = doc.createElement("album");
+
+        album.setAttribute("url", extract_url(album_data[1]));
+        album.setAttribute("band_name", extract_name(album_data[0]));
+        album.setAttribute("album_name", extract_name(album_data[1]));
+        album.setAttribute("type", album_data[2]);
+        album.setAttribute("date", album_data[3]);
+
+        doc.getElementsByTagName("albums")[0].appendChild(album);
+      }
+
+      write_dom_to_output_stream(filepath, doc);
+
+      return true;
+    }
+
     var tables = this.fetch_tables();
 
     if ( !tables)
