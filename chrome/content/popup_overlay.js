@@ -29,7 +29,8 @@ com.andrewbuntine.witchhammer.event_handler = function(){
 
   pub.on_search_item_clicked = function(type, field) {
     var selection = local_env.urlencode(getBrowserSelection());
-    var url = this.root_url + "/search/ajax-" + type + "-search/?field=" + field + "&query=" + selection + "&sEcho=0&iColumns=3&iDisplayStart=0&iDisplayLength=1000";
+    var url = this.root_url + "/search/ajax-" + type + "-search/?field=" + field +
+              "&query=" + selection + "&sEcho=1&iDisplayStart=0&iDisplayLength=1000";
 
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
@@ -62,11 +63,11 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     var parse_status = ma_parser.compile_data(type, local_env.get_extension_path().path + filepath);
 
     // If only one result is found then it's full URL is returned.
-    if (typeof parse_status == "string")
+    if (typeof parse_status == "string") {
         pub.display_new_tab_for(parse_status);
 
     // Display frame with multiple results.
-    else if (parse_status) {
+    } else if (parse_status) {
       pub.display_results_list(type);
 
     // If nothing was found, just inform the user.

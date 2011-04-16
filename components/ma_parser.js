@@ -21,14 +21,10 @@ MAParser.prototype = {
   },
 
   compile_band_data : function(filepath) {
-    try {
-      var bands_data = JSON.parse(this.html);
-    } catch (err) {
-      return false;
-    }
+    try { var bands_data = JSON.parse(this.html); } catch (e) { return false; }
 
     // Just return the URL for the first result if it is the only one.
-    if (bands_data["iTotalRecords"] == 1) {
+    if (bands_data["iTotalRecords"] === 1) {
       return extract_url(bands_data["aaData"][0]);
     } else {
       var doc = initialise_dom("<bands></bands>");
