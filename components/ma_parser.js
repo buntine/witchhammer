@@ -79,22 +79,24 @@ MAParser.prototype = {
   },
 
   compile_song_data : function(filepath) {
-    var tables = this.fetch_tables();
+    try { var songs_data = JSON.parse(this.html); } catch (e) { return false; }
 
-    if ( !tables)
-      return false;
-    else {
-      var song_extractor = /\<tr.*?\>+?\<td.*?\>+?(.+?)\<\/td\>\<td.*?\>+?\<a.*?\>(.*?)\<\/a\>\<\/td\>\<td.*?\>+?\<a href=\'release\.php\?id\=(\d+?)\'\>(.+?)\<\/a\>\<\/td\>\<td.*?\>(.*?)\<\/td\>\<\/tr\>/g;
+    // Just return the URL for the first result if it is the only one.
+    if (songs_data["iTotalRecords"] === 1) {
+      return extract_url(songs_data["aaData"][0][1]);
+    } else {
       var doc = initialise_dom("<songs></songs>");
       
       // Generate XML contents for each search result.
-      while ((song_data = song_extractor.exec(tables[0])) != null) {
+      for (var i=0; i<songs_data["aaData"].length; i++) {
+        var song_data = songs_data["aaData"][i];
         var song = doc.createElement("song");
 
-        song.setAttribute("id", song_data[3]);
-        song.setAttribute("band_name", song_data[2]);
-        song.setAttribute("album_name", filter_strong_elements(song_data[4]));
-        song.setAttribute("song_name", filter_strong_elements(song_data[5]));
+        song.setAttribute("url", extract_url(song_data[1]));
+        song.setAttribute("band_name", extract_name(song_data[0]));
+        song.setAttribute("album_name", extract_name(song_data[1]));
+        song.setAttribute("type", song_data[2]);
+        song.setAttribute("song_name", song_data[3]);
 
         doc.getElementsByTagName("songs")[0].appendChild(song);
       }
@@ -112,30 +114,6 @@ MAParser.prototype = {
       return eval("this.compile_" + type + "_data(filepath)");
   },
 
-  // Returns true if the supplied markup represents a "No Results" page.
-  // ** MARKED FOR DELETION **
-  is_no_results_page : function() {
-    var no_results_matcher = /\<.*?\>(\n)?no\sresults\sfound\.\<\/.*?\>/im;
-    return no_results_matcher.test(this.html);
-  },
-
-  // Returns an array of matching tables in the HTML.
-  // ** MARKED FOR DELETION **
-  fetch_tables : function() {
-    var table = /\<table(.*)\>.+\<\/table\>/;
-    return table.exec(this.html);
-  },
-
-  // For whatever reason, the devs at metal-archives simply render a Javascript redirect on the
-  // client-side in the case of only one result being found (2x200 instead of 1x301). This method
-  // will parse the returned markup and extract the ID that we need.
-  // ** MARKED FOR DELETION **
-  find_id_in_single_result : function() {
-    var id_extractor = /\<script\slanguage\=\'JavaScript\'\>\s?location.href\s?=\s?\'(band|release)\.php\?id\=(\d+)\'\;\<\/script\>/;
-    var id = id_extractor.exec(this.html);
-
-    return (id) ? parseInt(id[2]) : 0;
-  }
 };
 
 var components = [MAParser];
@@ -173,15 +151,6 @@ function clean_alternate_name_data(result) {
   } else {
     return "";
   }
-}
-
-// Cleans out strong elements from the passed in markup.
-  // ** MARKED FOR DELETION **
-function filter_strong_elements(html) {
-  if (html)
-    return html.replace(/\<[\/]?strong\>/g, '');
-  else
-    return "";
 }
 
 // Extracts a URL out of an anchor element.

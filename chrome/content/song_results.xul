@@ -6,7 +6,7 @@
         id="witchhammer_results_list"
         title="Witchhammer Song Results"
         buttons="accept,cancel"
-        width="820" height="360">
+        width="820" height="380">
 
   <script type="application/x-javascript" src="chrome://witchhammer/content/results_handler.js"/>
 
@@ -18,6 +18,8 @@
       <treecol id="witchhammer_results_band" label="Band" flex="1" />
       <splitter />
       <treecol id="witchhammer_results_song" label="Song" flex="2" />
+      <splitter />
+      <treecol id="witchhammer_results_type" label="Type" flex="1" />
     </treecols>
 
     <treechildren datasources="tmp/songs.xml" ref="*" querytype="xml">
@@ -26,9 +28,10 @@
         <action>
           <treeitem class="?id" uri="?">
             <treerow> 
-              <treecell label="?album_name" />
+              <treecell label="?album_name" value="?url" />
               <treecell label="?band_name" />
               <treecell label="?song_name" />
+              <treecell label="?type" />
             </treerow>
           </treeitem>
         </action>
