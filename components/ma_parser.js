@@ -21,84 +21,56 @@ MAParser.prototype = {
   },
 
   compile_band_data : function(filepath) {
-    try { var bands_data = JSON.parse(this.html); } catch (e) { return false; }
-
-    // Just return the URL for the first result if it is the only one.
-    if (bands_data["iTotalRecords"] === 1) {
-      return extract_url(bands_data["aaData"][0][0]);
-    } else {
-      var doc = initialise_dom("<bands></bands>");
-      
-      // Generate XML contents for each search result.
-      for (var i=0; i<bands_data["aaData"].length; i++) {
-        var band_data = bands_data["aaData"][i];
-        var band = doc.createElement("band");
-
-        band.setAttribute("url", extract_url(band_data[0]));
-        band.setAttribute("name", extract_name(band_data[0]));
-        band.setAttribute("alt", clean_alternate_name_data(band_data[0]));
-        band.setAttribute("genre", band_data[1]);
-        band.setAttribute("country", band_data[2]);
-
-        doc.getElementsByTagName("bands")[0].appendChild(band);
-      }
-
-      write_dom_to_output_stream(filepath, doc);
-
-      return true;
-    }
+    return this.generate_data("band", 0, filepath, function(element, band){
+        element.setAttribute("url", extract_url(band[0]));
+        element.setAttribute("name", extract_name(band[0]));
+        element.setAttribute("alt", clean_alternate_name_data(band[0]));
+        element.setAttribute("genre", band[1]);
+        element.setAttribute("country", band[2]);
+        return element;
+      });
   },
 
   compile_album_data : function(filepath) {
-    try { var albums_data = JSON.parse(this.html); } catch (e) { return false; }
-
-    // Just return the URL for the first result if it is the only one.
-    if (albums_data["iTotalRecords"] === 1) {
-      return extract_url(albums_data["aaData"][0][1]);
-    } else {
-      var doc = initialise_dom("<albums></albums>");
-      
-      // Generate XML contents for each search result.
-      for (var i=0; i<albums_data["aaData"].length; i++) {
-        var album_data = albums_data["aaData"][i];
-        var album = doc.createElement("album");
-
-        album.setAttribute("url", extract_url(album_data[1]));
-        album.setAttribute("band_name", extract_name(album_data[0]));
-        album.setAttribute("album_name", extract_name(album_data[1]));
-        album.setAttribute("type", album_data[2]);
-        album.setAttribute("date", album_data[3]);
-
-        doc.getElementsByTagName("albums")[0].appendChild(album);
-      }
-
-      write_dom_to_output_stream(filepath, doc);
-
-      return true;
-    }
+    return this.generate_data("album", 1, filepath, function(element, album){
+        element.setAttribute("url", extract_url(album[1]));
+        element.setAttribute("band_name", extract_name(album[0]));
+        element.setAttribute("album_name", extract_name(album[1]));
+        element.setAttribute("type", album[2]);
+        element.setAttribute("date", album[3]);
+        return element;
+      });
   },
 
   compile_song_data : function(filepath) {
-    try { var songs_data = JSON.parse(this.html); } catch (e) { return false; }
+    return this.generate_data("song", 1, filepath, function(element, song){
+        element.setAttribute("url", extract_url(song[1]));
+        element.setAttribute("band_name", extract_name(song[0]));
+        element.setAttribute("album_name", extract_name(song[1]));
+        element.setAttribute("type", song[2]);
+        element.setAttribute("song_name", song[3]);
+        return element;
+      });
+  },
+
+  // Generates XML data for a specific type of resource. A function is accepted, which
+  // sets the attributes on each result.
+  generate_data : function(type, on_error, filepath, fn) {
+    try { var data = JSON.parse(this.html); } catch (e) { return false; }
 
     // Just return the URL for the first result if it is the only one.
-    if (songs_data["iTotalRecords"] === 1) {
-      return extract_url(songs_data["aaData"][0][1]);
+    if (data["iTotalRecords"] === 1) {
+      return extract_url(songs_data["aaData"][0][on_error]);
     } else {
-      var doc = initialise_dom("<songs></songs>");
+      var plural = type + "s";
+      var doc = initialise_dom("<" + plural + "></" + plural + ">");
       
       // Generate XML contents for each search result.
-      for (var i=0; i<songs_data["aaData"].length; i++) {
-        var song_data = songs_data["aaData"][i];
-        var song = doc.createElement("song");
+      for (var i=0; i<data["aaData"].length; i++) {
+        var result = data["aaData"][i];
+        var element = fn(doc.createElement(type), result)
 
-        song.setAttribute("url", extract_url(song_data[1]));
-        song.setAttribute("band_name", extract_name(song_data[0]));
-        song.setAttribute("album_name", extract_name(song_data[1]));
-        song.setAttribute("type", song_data[2]);
-        song.setAttribute("song_name", song_data[3]);
-
-        doc.getElementsByTagName("songs")[0].appendChild(song);
+        doc.getElementsByTagName(plural)[0].appendChild(element);
       }
 
       write_dom_to_output_stream(filepath, doc);
