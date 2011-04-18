@@ -37,7 +37,7 @@ MAParser.prototype = {
         element.setAttribute("band_name", extract_name(album[0]));
         element.setAttribute("album_name", extract_name(album[1]));
         element.setAttribute("type", album[2]);
-        element.setAttribute("date", album[3]);
+        element.setAttribute("date", extract_date(album[3]));
         return element;
       });
   },
@@ -127,14 +127,17 @@ function clean_alternate_name_data(result) {
 
 // Extracts a URL out of an anchor element.
 function extract_url(result) {
-  var url = /^\<a\shref=\"(.+)\"/.exec(result);
-  return url[1];
+  return /^\<a\shref=\"(.+)\"/.exec(result)[1];
 }
 
 // Extracts a band name out of an anchor element.
 function extract_name(result) {
-  var name = /^\<a.+\>(.+)\<\/a\>/.exec(result);
-  return name[1];
+  return /^\<a.+\>(.+)\<\/a\>/.exec(result)[1];
+}
+
+// Extracts a release date.
+function extract_date(result) {
+  return result.replace(/\s<!.+$/, "");
 }
 
 // At the time of writing, Metal-Archives.com was returning PHP errors at
