@@ -131,8 +131,11 @@ function extract_url(result) {
 }
 
 // Extracts a band name out of an anchor element.
+// The additional logic is required to parse out multiple
+// bands from split albums (know a better way??).
 function extract_name(result) {
-  return /^\<a.+\>(.+)\<\/a\>/.exec(result)[1];
+  var filtered = result.replace(/\<a.+?\>(.+?)\<\/a\>/g, "$1");
+  return filtered.replace(/\s\|\s/g, " / ");
 }
 
 // Extracts a release date.
