@@ -32,8 +32,6 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     var url = this.root_url + "/search/ajax-" + type + "-search/?field=" + field +
               "&query=" + selection + "&sEcho=1&iDisplayStart=0&iDisplayLength=1000";
 
-    netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-
     var request = new XMLHttpRequest();
     request.open("GET", url, true);
 
