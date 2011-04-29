@@ -68,7 +68,7 @@ MAParser.prototype = {
       // Generate XML contents for each search result.
       for (var i=0; i<data["aaData"].length; i++) {
         var result = data["aaData"][i];
-        var element = fn(this.create_element_by_type(doc, type), result);
+        var element = fn(create_element_by_type(doc, type), result);
 
         doc.getElementsByTagName(plural)[0].appendChild(element);
       }
@@ -88,17 +88,6 @@ MAParser.prototype = {
       return this.compile_album_data(filepath);
     else
       return this.compile_song_data(filepath);
-  },
-
-  // This function is required by the Mozilla validators. I cannot use a variable
-  // when creating new elements. I must use literal values, unfortunately!
-  create_element_by_type : function (doc, type) {
-    if (type === "band")
-      return doc.createElement("band");
-    else if (type === "album")
-      return doc.createElement("album");
-    else
-      return doc.createElement("song");
   },
 
 };
@@ -127,6 +116,17 @@ function write_dom_to_output_stream(filepath, doc) {
 function initialise_dom(contents) {
   var parser = Components.classes["@mozilla.org/xmlextras/domparser;1"].createInstance(Components.interfaces.nsIDOMParser);
   return parser.parseFromString(contents, "text/xml");
+}
+
+  // This function is required by the Mozilla validators. I cannot use a variable
+  // when creating new elements. I must use literal values, unfortunately!
+function create_element_by_type(doc, type) {
+  if (type === "band")
+    return doc.createElement("band");
+  else if (type === "album")
+    return doc.createElement("album");
+  else
+    return doc.createElement("song");
 }
 
 // Cleans out the unnecessary data from the "altername names" markup chunk.
