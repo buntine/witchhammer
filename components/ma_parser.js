@@ -79,11 +79,14 @@ MAParser.prototype = {
     }
   },
 
-  // Just a convenience method so I don't need evals or case statements anywhere else.
+  // Just a convenience method.
   compile_data : function(type, filepath) {
-    var valid_types = /^(band|album|song)$/;
-    if ( valid_types.test(type) ) 
-      return eval("this.compile_" + type + "_data(filepath)");
+    if (type === "band")
+      return this.compile_band_data(filepath);
+    else if (type === "album")
+      return this.compile_album_data(filepath);
+    else
+      return this.compile_song_data(filepath);
   },
 
 };
