@@ -68,7 +68,7 @@ MAParser.prototype = {
       // Generate XML contents for each search result.
       for (var i=0; i<data["aaData"].length; i++) {
         var result = data["aaData"][i];
-        var element = fn(doc.createElement(type), result)
+        var element = fn(this.create_element_by_type(doc, type), result);
 
         doc.getElementsByTagName(plural)[0].appendChild(element);
       }
@@ -79,7 +79,8 @@ MAParser.prototype = {
     }
   },
 
-  // Just a convenience method.
+  // Just a convenience method. The Mozilla validators prevent me from using
+  // eval here.
   compile_data : function(type, filepath) {
     if (type === "band")
       return this.compile_band_data(filepath);
@@ -87,6 +88,17 @@ MAParser.prototype = {
       return this.compile_album_data(filepath);
     else
       return this.compile_song_data(filepath);
+  },
+
+  // This function is required by the Mozilla validators. I cannot use a variable
+  // when creating new elements. I must use literal values, unfortunately!
+  create_element_by_type : function (doc, type) {
+    if (type === "band")
+      return doc.createElement("band");
+    else if (type === "album")
+      return doc.createElement("album");
+    else
+      return doc.createElement("song");
   },
 
 };
