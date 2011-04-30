@@ -22,6 +22,7 @@ com.andrewbuntine.witchhammer.local_env = function(){
       .get("ProfD", Components.interfaces.nsIFile);
   };
 
+  // Returns a file URI from the users profile path. E.g file:///path/to/profile/file
   pub.make_file_uri = function(file) {
     var ioService = Components.classes["@mozilla.org/network/io-service;1"]
                       .getService(Components.interfaces.nsIIOService);
