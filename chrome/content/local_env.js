@@ -22,11 +22,17 @@ com.andrewbuntine.witchhammer.local_env = function(){
       .get("ProfD", Components.interfaces.nsIFile);
   };
 
+  pub.make_file_uri = function(file) {
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                      .getService(Components.interfaces.nsIIOService);
+    return ioService.newFileURI(pub.get_profile_path()).spec + file;
+  };
+
   // Returns a filepath for the native O/S
   pub.build_path = function(path) {
     var seperator = (pub.get_os() == "WINNT") ? "\\" : "/";
     return seperator + path.join(seperator);
-  },
+  };
 
   // Displays a personalised alert.
   pub.display_alert = function(message) {
@@ -66,7 +72,7 @@ com.andrewbuntine.witchhammer.local_env = function(){
     // Begin with encodeURIComponent, which most resembles PHP's encoding functions
     ret = encodeURIComponent(ret);
     
-    for (search in histogram) {
+    for (var search in histogram) {
       replace = histogram[search];
       ret = replacer(search, replace, ret) // Custom replace. No regexing
     }

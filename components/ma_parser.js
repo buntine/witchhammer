@@ -152,6 +152,7 @@ function extract_url(result) {
 function extract_name(result) {
   var regex = /.*?\<a.+?\>(.+?)\<\/a\>/y;
   var bands = "";
+  var band;
   regex.lastIndex = 0;
 
   while ((band = regex.exec(result)) != null) {
