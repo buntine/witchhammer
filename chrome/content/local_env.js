@@ -15,14 +15,11 @@ com.andrewbuntine.witchhammer.local_env = function(){
              .getService(Components.interfaces.nsIXULRuntime).OS; 
   };
 
-  // Returns the local path where this extension is installed.
-  pub.get_extension_path = function() {
-    const id = "witchhammer@andrewbuntine.com";
-
-    return Components.classes["@mozilla.org/extensions/manager;1"]
-      .getService(Components.interfaces.nsIExtensionManager)
-      .getInstallLocation(id)
-      .getItemLocation(id); 
+  // Returns the local path of the users Firefox profile.
+  pub.get_profile_path = function() {
+    return Components.classes["@mozilla.org/file/directory_service;1"]
+      .getService(Components.interfaces.nsIProperties)
+      .get("ProfD", Components.interfaces.nsIFile);
   };
 
   // Returns a filepath for the native O/S

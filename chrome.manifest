@@ -1,3 +1,7 @@
 content     witchhammer    chrome/content/
 
 overlay chrome://browser/content/browser.xul chrome://witchhammer/content/popup_overlay.xul
+
+component {ae910a75-1f06-49cb-b853-cc0b9585ede6} components/ma_parser.js
+contract @andrewbuntine.com/ma_parser;1 {ae910a75-1f06-49cb-b853-cc0b9585ede6}
+category profile-after-change MAParser @andrewbuntine.com/ma_parser;1
