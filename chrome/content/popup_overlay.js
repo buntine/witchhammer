@@ -57,7 +57,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
     ma_parser.set_markup(html);
 
     var plural_type = type + "s";
-    var filepath = "/" + plural_type + ".xml";
+    var filepath = local_env.build_path([plural_type + ".xml"]);
     var parse_status = ma_parser.compile_data(type, local_env.get_profile_path().path + filepath);
 
     // If only one result is found then it's full URL is returned.
