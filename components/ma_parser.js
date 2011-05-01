@@ -93,10 +93,13 @@ MAParser.prototype = {
 };
 
 var components = [MAParser];
-if (XPCOMUtils.generateNSGetFactory)
+if (XPCOMUtils.generateNSGetFactory) {
   var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
-else
-  var NSGetModule =  XPCOMUtils.generateModule(components);
+} else  {
+  function NSGetModule(compMgr, fileSpec) {
+    return XPCOMUtils.generateModule(components);
+  }
+}
 
 function write_dom_to_output_stream(filepath, doc) {
   var serializer = Components.classes["@mozilla.org/xmlextras/xmlserializer;1"].createInstance(Components.interfaces.nsIDOMSerializer);
