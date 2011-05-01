@@ -25,7 +25,7 @@
 
     <treechildren datasources="rdf:null" ref="*" querytype="xml">
       <template>
-        <query expr="band" />
+        <query id="query_type" expr="band" />
         <action>
           <treeitem class="?id" uri="?">
             <treerow> 

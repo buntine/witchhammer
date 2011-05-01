@@ -8,6 +8,7 @@
         buttons="accept,cancel"
         width="750" height="380">
 
+  <script type="application/x-javascript" src="chrome://witchhammer/content/local_env.js" />
   <script type="application/x-javascript" src="chrome://witchhammer/content/results_handler.js"/>
 
   <tree id="witchhammer_results_tree" flex="1" rows="15">
@@ -22,9 +23,9 @@
       <treecol id="witchhammer_results_date" label="Date" flex="1" />
     </treecols>
 
-    <treechildren datasources="tmp/albums.xml" ref="*" querytype="xml">
+    <treechildren datasources="rdf:null" ref="*" querytype="xml">
       <template>
-        <query expr="album" />
+        <query id="query_type" expr="album" />
         <action>
           <treeitem class="?id" uri="?">
             <treerow> 

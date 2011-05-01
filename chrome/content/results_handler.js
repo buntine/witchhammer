@@ -16,7 +16,8 @@ com.andrewbuntine.witchhammer.results_handler = function(){
   pub.init = function() {
     this.results_tree = document.getElementById("witchhammer_results_tree");
 
-    document.getElementsByTagName("treechildren")[0].datasources = local_env.make_file_uri("bands.xml");
+    var type = document.getElementById("query_type").getAttribute("expr") + "s.xml";
+    document.getElementsByTagName("treechildren")[0].datasources = local_env.make_file_uri(type);
   };
 
   pub.on_dialog_accept = function() {
