@@ -13,7 +13,7 @@ com.andrewbuntine.witchhammer.event_handler = function(){
   var local_env = com.andrewbuntine.witchhammer.local_env;
 
   pub.init = function() {
-    this.root_url = "http://v2.metal-archives.com";
+    this.root_url = "http://www.metal-archives.com";
     this.menu_item = document.getElementById("witchhammer_menu");
 
     // Attach event handlers.
