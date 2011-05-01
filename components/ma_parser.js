@@ -55,12 +55,14 @@ MAParser.prototype = {
 
   // Generates XML data for a specific type of resource. A function is accepted, which
   // sets the attributes on each result.
-  generate_data : function(type, on_error, filepath, fn) {
+  generate_data : function(type, url_index, filepath, fn) {
     try { var data = JSON.parse(this.html); } catch (e) { return false; }
 
     // Just return the URL for the first result if it is the only one.
-    if (data["iTotalRecords"] === 1) {
-      return extract_url(songs_data["aaData"][0][on_error]);
+    if (data["iTotalRecords"] === 0) {
+      return false;
+    } else if (data["iTotalRecords"] === 1) {
+      return extract_url(data["aaData"][0][url_index]);
     } else {
       var plural = type + "s";
       var doc = initialise_dom("<" + plural + "></" + plural + ">");
